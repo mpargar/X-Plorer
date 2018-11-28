@@ -2,8 +2,8 @@
   <div id="TopBar">
     <ul class="btns">
       <li @click="back()">◂</li>
-      <li>▸</li>
-      <li>▴</li>
+      <li @click="front()">▸</li>
+      <li @click="up()">▴</li>
     </ul>
     <ul class="dir">
       <li v-for="(e, i) in dir" :key="i">
@@ -23,15 +23,13 @@ export default {
   ],
   methods: {
     back () {
-      console.log(this.historyIndex)
       this.$parent.$emit('historyBack')
-      /* if (this.historyIndex > 0) {
-        this.historyIndex--
-        this.dir = []
-        this.history[this.historyIndex].forEach((e, i) => {
-          this.$set(this.dir, i, e)
-        })
-      } */
+    },
+    front () {
+      this.$parent.$emit('historyFront')
+    },
+    up () {
+      this.$parent.$emit('upDirectory')
     }
   }
 }

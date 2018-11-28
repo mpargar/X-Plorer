@@ -30,9 +30,7 @@ export default {
       e.selected = true
     },
     dbClck (e) {
-      this.$set(this.dir, this.dir.length, e.name)
-      this.history.push(Object.assign([], this.dir))
-      this.$parent.$emit('indexup')
+      this.$parent.$emit('openFolder', (e))
     }
   }
 }

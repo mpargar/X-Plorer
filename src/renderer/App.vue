@@ -3,7 +3,7 @@
       <top-bar
         :dir="dir"
         :history="history"
-        :historyIndex="historyIndex"></top-bar>
+        :historyIndex="historyIndex"/>
       <ul class="main">
         <li>
           
@@ -56,13 +56,36 @@
         this.$set(this.dirContent[i], 'selected', false)
       })
       /* ON */
-      this.$on('indexup', (e) => {
-        this.historyIndex++
-      })
       this.$on('historyBack', (e) => {
-        if(this.historyIndex > 0){
-          
+        if (this.historyIndex > 0) {
+          this.historyIndex--
+          this.dir = this.history[this.historyIndex]
         }
+      })
+      this.$on('historyFront', (e) => {
+        if (this.historyIndex + 1 < this.history.length) {
+          this.historyIndex++
+          this.dir = this.history[this.historyIndex]
+        }
+      })
+      this.$on('upDirectory', (e) => {
+        if (this.dir.length > 1) {
+          if (this.history.length - 1 > this.historyIndex) {
+            this.history = this.history.slice(0, this.historyIndex + 1)
+          }
+          this.dir = this.dir.slice(0, this.dir.length - 1)
+          this.history.push(Object.assign([], this.dir))
+          this.historyIndex++
+        }
+      })
+      this.$on('openFolder', (e) => {
+        if (this.history.length - 1 > this.historyIndex) {
+          this.history = this.history.slice(0, this.historyIndex + 1)
+          // this.dir = this.history[this.history.last]
+        }
+        this.$set(this.dir, this.dir.length, e.name)
+        this.history.push(Object.assign([], this.dir))
+        this.historyIndex++
       })
     },
     watch: {
