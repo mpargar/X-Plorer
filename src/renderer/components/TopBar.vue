@@ -4,6 +4,9 @@
       <li @click="back()">◂</li>
       <li @click="front()">▸</li>
       <li @click="up()">▴</li>
+      <li @click="createFilFol(false)"><img src="./../assets/NewFolder.png"></li>
+      <li @click="createFilFol(true)"><img src="./../assets/NewFile.png"></li>
+      <li @click="paste()"><img src="./../assets/Paste.png"></li>
     </ul>
     <ul class="dir">
       <li v-for="(e, i) in dir" :key="i">
@@ -30,6 +33,12 @@ export default {
     },
     up () {
       this.$parent.$emit('upDirectory')
+    },
+    createFilFol (isFile) {
+      this.$parent.$emit('createFilFol', (isFile))
+    },
+    paste () {
+      this.$parent.$emit('paste')
     }
   }
 }
@@ -49,7 +58,7 @@ export default {
       display: flex;
     }
     .btns {
-      width: 100px;
+      width: 250px;
       height: 100%;
       align-items: center;
       justify-content: space-between;
@@ -62,6 +71,9 @@ export default {
         align-items: center;
         cursor: default;
         border: 1px solid transparent;
+        >img {
+          max-height: 30px;
+        }
         &:hover{
           background: #e5f3ff;
           border-color:#cce8ff;
