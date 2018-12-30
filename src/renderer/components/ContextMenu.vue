@@ -3,7 +3,7 @@
       <li @click="open()">Abrir</li>
       <li @click="rename()">Renombrar</li>
       <li @click="copy()">Copiar</li>
-      <li @click="cut()">Cortar</li> 
+      <!-- <li @click="cut()">Cortar</li>  -->
       <li @click="del()">Eliminar</li>
     </ul>
 </template>

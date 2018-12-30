@@ -1,14 +1,16 @@
 <template>
   <div id="app">
+    <!-- TOP BAR -->
       <top-bar
         :dir="dir"
         :history="history"
         :historyIndex="historyIndex"/>
       <ul class="main">
-        <li>
+        <!-- <li>
           
-        </li>
+        </li> -->
         <li>
+          <!-- MAIN -->
           <folders-files
             :dir="dir"
             :dirContent="dirContent"
@@ -48,13 +50,12 @@
   import SideBar from '@/components/SideBar'
   import TopBar from '@/components/TopBar'
   import FoldersFiles from '@/components/FoldersFiles'
-  const Os = require('os')
-  const Fs = require('fs')
-  const FsE = require('fs-extra')
-  const Shell = require('electron').shell
-  const Path = require('path')
-  const Rimraf = require('rimraf')
-  /* const Ncp = require('ncp').ncp */
+  const Os = require('os') // Acceder ainformación del SO
+  const Fs = require('fs') // File System
+  const FsE = require('fs-extra') // Complemento de File System
+  const Shell = require('electron').shell // Controla y emula la shell
+  const Path = require('path') // Formateo de rutas
+  const Rimraf = require('rimraf') // Libreria que elimina (rm -rf)
   export default {
     name: 'X-Plorer',
     components: {
@@ -122,6 +123,7 @@
         if (this.history.length - 1 > this.historyIndex) {
           this.history = this.history.slice(0, this.historyIndex + 1)
           this.dir = this.history[this.history.last]
+          console.log(this.dir)
         }
         this.$set(this.dir, this.dir.length, e.name)
         this.history.push(Object.assign([], this.dir))
@@ -130,7 +132,7 @@
       this.$on('openFile', (e) => {
         Shell.openItem(Path.join(this.dir.join('/'), e.name))
       })
-      this.$on('deleteFolder', (e) => {
+      this.$on('deleteFolder', (e) => { // Delete folder and files
         if (e.type === 'file') {
           Fs.unlink(this.dir.join('/') + '/' + e.name, (err) => {
             if (!err) {
@@ -150,9 +152,9 @@
       })
       this.$on('rename', (el, i) => {
         this.renameBool = true
-        let tmp = this.dirContent[el].name
-        this.renameBox = tmp
-        this.lastName = tmp
+        let tmp = this.dirContent[el].name // Guardo el nombre del archivo (No reactivamente)
+        this.renameBox = tmp // Se la doy al a la caja
+        this.lastName = tmp // Se la doy al respaldo
       })
       this.$on('createFilFol', (isFile) => {
         this.newFilFol = true
@@ -160,13 +162,11 @@
         this.newFilFolType = isFile
       })
       this.$on('copy', (element) => {
-        console.log(element)
         this.copyDir = this.dir.join('/') + '/' + element.name
         this.copyDirType = element.type
         this.copyDirName = element.name
       })
       this.$on('paste', () => {
-        console.log('Paste')
         /* Existe una dirección a copiar */
         if (this.copyDir) {
           /* Folder */
@@ -186,7 +186,6 @@
           } else {
             Fs.copyFile(this.copyDir, this.dir.join('/') + '/' + this.copyDirName, (err) => {
               if (err) throw err
-              console.log('DONE!')
               let backup = this.dir
               this.dir = []
               this.dir = backup
@@ -200,11 +199,12 @@
         Fs.rename(this.dir.join('/') + '/' + this.lastName, this.dir.join('/') + '/' + this.renameBox, (err) => {
           if (err) {
           } else {
+            /* Actualiza la pantalla main */
             let backup = this.dir
             this.dir = []
             this.dir = backup
           }
-          this.renameBool = false
+          this.renameBool = false // Oculta el input
         })
       },
       renameCancel () {
@@ -212,8 +212,8 @@
       },
       newFilFolOk () {
         if (this.newFilFolType) {
+          /* Si es verdadero se ejecuta el codigo de nuevo archivo */
           try {
-            console.log('trying --> ', this.newFilFolName)
             Fs.writeFileSync(this.dir.join('/') + '/' + this.newFilFolName, '', 'utf-8')
             let backup = this.dir
             this.dir = []
@@ -223,6 +223,7 @@
             console.log('ERROR --> ', error)
           }
         } else {
+          /* Si es falso se ejecuta el codigo de nuevo folder */
           Fs.mkdir(this.dir.join('/') + '/' + this.newFilFolName, (err) => {
             if (!err) {
               let backup = this.dir
@@ -239,13 +240,11 @@
     },
     watch: {
       dir () {
+        this.dirContent = [] // Se vacía dir contentent
         /* Get folders */
-        this.dirContent = []
-        console.log(':::::', Fs.readdirSync(this.dir.join('/')))
-        let folFil = Fs.readdirSync(this.dir.join('/')).map((file) => {
+        let folFil = Fs.readdirSync(this.dir.join('/')).filter(e => e !== 'hiberfil.sys' && e !== 'pagefile.sys' && e !== 'Recovery' && e !== 'swapfile.sys' && e !== 'System Volume Information').map((file) => {
           return (Fs.statSync(this.dir.join('/') + '/' + file).isDirectory()) ? ({name: file, type: 'directory'}) : ({name: file, type: 'file'})
         })
-        console.log('------------------> TEST <-------------------')
         folFil.forEach((e, i) => {
           this.$set(this.dirContent, i, {})
           this.$set(this.dirContent[i], 'name', e.name)
@@ -326,7 +325,7 @@
           width: 20%;
         }
         &:last-child{
-          width: 80%;
+          width: 100%;
           border-left: 1px solid #f7f7f7;
         }
       }
